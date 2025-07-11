@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>HAZO - Happy Zone</title>
+    <style>
+        :root {
+            --primary: #05ffee;
+            --background: #1a1a1a; /* Dark background */
+            --text: #e0e0e0; /* Light text for contrast */
+            --card-bg: #2a2a2a; /* Darker card background */
+            --shadow: rgba(0, 0, 0, 0.3); /* Darker shadow */
+            --button-hover: #03ffe2;
+            --coin-color: #00fff7;
+            --sky-blue: #87CEEB; /* Sky blue color for Play Store icon */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: var(--primary);
+            padding: 30px 20px;
+            text-align: center;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 12px var(--shadow);
+            position: relative;
+            display: flex; /* Use flexbox for header content */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        header h1 {
+            font-size: 2.8em;
+            color: #000; /* Keep black for contrast on primary */
+            margin-bottom: 5px;
+        }
+
+        header p {
+            font-size: 1.2em;
+            color: #333; /* Keep dark for contrast on primary */
+            margin-bottom: 20px; /* Space before the new button */
+        }
+
+        .coin-display {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 10px 15px;
+            border-radius: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+            color: var(--text);
+            font-size: 1.1em;
+        }
+
+        .coin-icon {
+            color: var(--coin-color);
+            margin-right: 8px;
+            font-size: 1.5em;
+        }
+
+        @keyframes coinBounce {
+            0% { transform: translateY(0); }
+            25% { transform: translateY(-5px); }
+            50% { transform: translateY(0); }
+            75% { transform: translateY(-2px); }
+            100% { transform: translateY(0); }
+        }
+
+        .coin-icon.animate-bounce {
+            animation: coinBounce 0.5s ease-out;
+        }
+
+        .playstore-button-header {
+            background-color: #000; /* Black background for button */
+            color: #fff; /* White text for contrast */
+            padding: 12px 25px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px; /* Space between image and text */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Darker shadow for dark button */
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            margin-top: 10px;
+            width: auto; /* Allow width to adjust to content */
+            height: auto; /* Allow height to adjust to content */
+        }
+
+        .playstore-button-header:hover {
+            background-color: #333; /* Slightly lighter black on hover */
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        .playstore-button-header img {
+            width: 80px; /* Size for the Play Store logo image */
+            height: 80px;
+            vertical-align: middle; /* Align image with text */
+        }
+
+
+        /* New styles for the download app section */
+        #download-app {
+            background-color: var(--card-bg); /* Use card background for consistency */
+            padding: 50px 20px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px var(--shadow);
+            margin: 40px auto; /* Center the box and give it margin */
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        #download-app h2 {
+            font-size: 2.5em;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        #download-app p {
+            font-size: 1.2em;
+            color: #b0b0b0;
+            margin-bottom: 30px;
+            max-width: 600px;
+        }
+
+        .download-app-button {
+            background-color: #000; /* Black background for the button */
+            color: #fff; /* White text */
+            padding: 15px 30px; /* Larger padding */
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.3em; /* Larger font size */
+            display: inline-flex;
+            align-items: center;
+            gap: 15px; /* More space between image and text */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        }
+
+        .download-app-button:hover {
+            background-color: #333;
+            transform: translateY(-5px); /* More pronounced lift */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
+        }
+
+        .download-app-button img {
+            width: 32px; /* Larger image size */
+            height: 32px;
+            vertical-align: middle;
+        }
+
+
+        nav {
+            background-color: #333;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            box-shadow: 0 2px 6px var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        nav a {
+            color: #ccc;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            padding: 5px 10px;
+            border-radius: 8px;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        nav a:hover, nav a.active {
+            background-color: var(--primary);
+            color: black;
+        }
+
+        section {
+            padding: 40px 20px;
+            text-align: center;
+            flex-grow: 1;
+            margin-bottom: 30px;
+        }
+
+        section:last-of-type {
+            margin-bottom: 0;
+        }
+
+        section h2 {
+            font-size: 2em;
+            margin-bottom: 25px;
+            color: var(--primary);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px var(--shadow);
+            transition: transform 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+            text-align: left;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .card img,
+        .card video {
+            width: 100%;
+            display: block;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            object-fit: cover;
+            height: 200px;
+        }
+
+        .card-content {
+            flex-grow: 1;
+            margin-bottom: 15px;
+        }
+
+        .card-content h3 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            color: var(--text);
+        }
+
+        .card-content p {
+            font-size: 1em;
+            color: #b0b0b0;
+            line-height: 1.5;
+        }
+
+        .earn-coins-btn {
+            background-color: var(--coin-color);
+            color: #333;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+            margin-top: 15px;
+            align-self: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            width: fit-content;
+        }
+
+        .earn-coins-btn:hover {
+            background-color: #05fcf3;
+            transform: translateY(-2px);
+        }
+
+        .earn-coins-btn:disabled {
+            background-color: #555;
+            color: #888;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .coin-earned-message {
+            font-size: 0.9em;
+            color: #8aff8a;
+            margin-top: 5px;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+            text-align: center;
+            transform: translateY(10px);
+        }
+        .coin-earned-message.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .info-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: left;
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px var(--shadow);
+            color: var(--text);
+        }
+
+        .info-content h3 {
+            font-size: 1.8em;
+            color: var(--primary);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .info-content p {
+            font-size: 1.1em;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            color: #b0b0b0;
+        }
+
+        .info-content ul {
+            list-style: disc;
+            padding-left: 25px;
+            margin-bottom: 15px;
+            color: #b0b0b0;
+        }
+
+        .info-content ul li {
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+
+
+        .footer {
+            background-color: #333;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9em;
+            color: #ccc;
+            margin-top: auto;
+            border-top: 1px solid #444;
+            border-radius: 20px 20px 0 0;
+            box-shadow: 0 -2px 6px var(--shadow);
+        }
+
+        .footer-social-links {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+        }
+
+        .footer-social-links a {
+            color: #ccc;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: color 0.3s, transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .footer-social-links a:hover {
+            color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .footer-social-links svg {
+            width: 28px;
+            height: 28px;
+            fill: currentColor;
+        }
+        /* Specific style for Play Store icon fill color in footer */
+        .footer-social-links a.playstore-icon-footer svg {
+            fill: var(--sky-blue); /* This rule might not be needed if no playstore icon in footer */
+        }
+        .footer-social-links a.playstore-icon-footer:hover svg {
+            fill: var(--primary); /* This rule might not be needed if no playstore icon in footer */
+        }
+
+
+        @media screen and (max-width: 768px) {
+            header h1 {
+                font-size: 2.2em;
+            }
+
+            header p {
+                font-size: 1em;
+            }
+
+            .coin-display {
+                top: 10px;
+                right: 10px;
+                padding: 8px 12px;
+                font-size: 0.9em;
+            }
+
+            .coin-icon {
+                font-size: 1.2em;
+            }
+
+            .playstore-button-header {
+                padding: 10px 20px;
+                font-size: 1em;
+            }
+            .playstore-button-header img {
+                width: 50px;
+                height: 50px;
+            }
+
+            #download-app {
+                padding: 30px 15px;
+                margin: 20px auto;
+            }
+
+            #download-app h2 {
+                font-size: 2em;
+            }
+
+            #download-app p {
+                font-size: 1em;
+            }
+
+            .download-app-button {
+                padding: 12px 25px;
+                font-size: 1.1em;
+                gap: 10px;
+            }
+
+            .download-app-button img {
+                width: 80px;
+                height: 80px;
+            }
+
+            section h2 {
+                font-size: 1.6em;
+            }
+
+            nav {
+                flex-direction: column;
+                gap: 10px;
+                padding: 15px;
+            }
+
+            nav a {
+                padding: 8px 15px;
+                font-size: 1em;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .card {
+                padding: 15px;
+            }
+
+            .card img,
+            .card video {
+                height: 180px;
+            }
+
+            .card-content h3 {
+                font-size: 1.2em;
+            }
+
+            .card-content p {
+                font-size: 0.9em;
+            }
+
+            .earn-coins-btn {
+                padding: 8px 12px;
+                font-size: 0.9em;
+            }
+
+            .info-content {
+                padding: 20px;
+            }
+            .info-content h3 {
+                font-size: 1.5em;
+            }
+            .info-content p {
+                font-size: 0.95em;
+            }
+            .footer-social-links {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>HAZO 😊</h1>
+        <p>Welcome to your Happy Zone – Memes, Flicks & Skrits!</p>
+        <a href="https://play.google.com/store/apps/details?id=com.app.hazoapp" target="_blank" rel="noopener noreferrer" class="playstore-button-header">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play Store Logo" onerror="this.onerror=null;this.src='https://placehold.co/24x24/000000/FFFFFF?text=Play';"/>
+            Download!
+        </a>
+        <div class="coin-display">
+            <span class="coin-icon" id="header-coin-icon">💰</span>
+            <span id="coin-balance">0</span> Coins
+        </div>
+    </header>
+
+    <nav>
+        <a href="#memes" class="nav-link active">😂 Memes</a>
+        <a href="#flicks" class="nav-link">🎬 Flicks</a>
+        <a href="#skrits" class="nav-link">🎭 Skrits</a>
+        <a href="#download-app" class="nav-link">📱 Download App</a> <!-- Existing nav link -->
+        <a href="#privacy" class="nav-link">🔒 Privacy</a>
+        <a href="#child-safety" class="nav-link">👶 Child Safety</a>
+        <a href="#terms" class="nav-link">📄 Terms</a>
+        <a href="#contact" class="nav-link">📧 Contact</a>
+    </nav>
+
+    <main>
+        <section id="memes">
+            <h2>😂 Memes</h2>
+            <div class="grid">
+                <div class="card">
+                    <img src="https://picsum.photos/id/237/600/400" alt="Dog looking up meme" class="w-full h-auto object-cover rounded-xl mb-5 shadow-sm border border-gray-100">
+                    <div class="card-content">
+                        <h3>The Loyal Companion</h3>
+                        <p>That moment when your dog looks at you with pure adoration (or is it just for treats?).</p>
+                    </div>
+                    <button class="earn-coins-btn">Collect 10 Coins</button>
+                    <span class="coin-earned-message">Coins Collected!</span>
+                </div>
+                <div class="card">
+                    <img src="https://picsum.photos/id/238/600/400" alt="Person thinking meme" class="w-full h-auto object-cover rounded-xl mb-5 shadow-sm border border-gray-100">
+                    <div class="card-content">
+                        <h3>Deep Thoughts with a Twist</h3>
+                        <p>When you're pondering the universe, but also what's for dinner.</p>
+                    </div>
+                    <button class="earn-coins-btn">Collect 10 Coins</button>
+                    <span class="coin-earned-message">Coins Collected!</span>
+                </div>
+                <div class="card">
+                    <img src="https://picsum.photos/id/239/600/400" alt="Funny animal reaction meme" class="w-full h-auto object-cover rounded-xl mb-5 shadow-sm border border-gray-100">
+                    <div class="card-content">
+                        <h3>Unexpected Reactions</h3>
+                        <p>That priceless expression when something completely out of left field happens.</p>
+                    </div>
+                    <button class="earn-coins-btn">Collect 10 Coins</button>
+                    <span class="coin-earned-message">Coins Collected!</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="flicks">
+            <h2>🎬 Flicks</h2>
+            <div class="grid">
+                <div class="card">
+                    <video controls class="w-full h-auto rounded-xl mb-5 shadow-sm border border-gray-100">
+                        <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4" />
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="card-content">
+                        <h3>Calm Waters</h3>
+                        <p>A short film about serene lakes and peaceful sunsets. Perfect for unwinding after a long day.</p>
+                    </div>
+                    <button class="earn-coins-btn">Collect 15 Coins</button>
+                    <span class="coin-earned-message">Coins Collected!</span>
+                </div>
+                <div class="card">
+                    <video controls class="w-full h-auto rounded-xl mb-5 shadow-sm border border-gray-100">
+                        <source src="https://www.w3schools.com/html/movie.mp4" type="video/mp4" />
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="card-content">
+                        <h3>Whispers of the Forest</h3>
+                        <p>Explore the gentle sounds and sights of a vibrant forest ecosystem. Pure tranquility.</p>
+                    </div>
+                    <button class="earn-coins-btn">Collect 15 Coins</button>
+                    <span class="coin-earned-message">Coins Collected!</span>
+                </div>
+                <div class="card">
+                    <img src="https://picsum.photos/id/240/600/400" alt="Peaceful nature scene" class="w-full h-auto object-cover rounded-xl mb-5 shadow-sm border border-gray-100">
+                    <div class="card-content">
+                        <h3>Cozy Rainy Day Animation</h3>
+                        <p>A charming animated short featuring a cozy room and a gentle rain outside.</p>
+                    </div>
+                    <button class="earn-coins-btn">Collect 15 Coins</button>
+                    <span class="coin-earned-message">Coins Collected!</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="skrits">
+            <h2>🎭 Skrits</h2>
+            <div class="grid">
+                <div class="card">
+                    <img src="https://picsum.photos/id/241/600/400" alt="Flowy summer skirt" class="w-full h-auto object-cover rounded-xl mb-5 shadow-sm border border-gray-100">
+                    <div class="card-content">
+                        <h3>Flowy Floral Maxi</h3>
+                        <p>Embrace comfort and style with this vibrant, airy floral maxi skirt.</p>
+                    </div>
+                    <button class="earn-coins-btn">Collect 10 Coins</button>
+                    <span class="coin-earned-message">Coins Collected!</span>
+                </div>
+                <div class="card">
+                    <img src="https://picsum.photos/id/242/600/400" alt="Stylish denim skirt" class="w-full h-auto object-cover rounded-xl mb-5 shadow-sm border border-gray-100">
+                    <div class="card-content">
+                        <h3>Chic A-Line Denim</h3>
+                        <p>A versatile and classic denim skirt, perfect for everyday casual elegance.</p>
+                    </div>
+                    <button class="earn-coins-btn">Collect 10 Coins</button>
+                    <span class="coin-earned-message">Coins Collected!</span>
+                </div>
+                <div class="card">
+                    <img src="https://picsum.photos/id/243/600/400" alt="Elegant pleated skirt" class="w-full h-auto object-cover rounded-xl mb-5 shadow-sm border border-gray-100">
+                    <div class="card-content">
+                        <h3>Elegant Pleated Midi</h3>
+                        <p>Add a touch of sophistication with this graceful pleated midi skirt, ideal for any occasion.</p>
+                    </div>
+                    <button class="earn-coins-btn">Collect 10 Coins</button>
+                    <span class="coin-earned-message">Coins Collected!</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Download App Section -->
+        <section id="download-app">
+            <h2>Download HAZO App!</h2>
+            <p>Experience the full joy of HAZO on your mobile device. Get exclusive content, faster loading, and a seamless experience!</p>
+            <a href="https://play.google.com/store/apps/details?id=com.app.hazoapp" target="_blank" rel="noopener noreferrer" class="download-app-button">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play Store Logo" onerror="this.onerror=null;this.src='https://placehold.co/32x32/000000/FFFFFF?text=Play';"/>
+                Download on Play Store
+            </a>
+        </section>
+
+        <section id="privacy">
+            <h2>🔒 Privacy First</h2>
+            <div class="info-content">
+                <h3>HAZO – Privacy Policy</h3>
+                <p><strong>Effective Date:</strong> May 31, 2025</p>
+                <h4>1. Introduction</h4>
+                <p>Welcome to Hazo, a social media platform that allows users to share and view content. We are committed to protecting your privacy and ensuring that your data is managed responsibly and transparently.</p>
+                <p><strong>Age Restriction:</strong> We do not allow children under the age of 13 to use our service. Only individuals born after December 31, 2010, are permitted to create accounts.</p>
+                <h4>2. Information We Collect</h4>
+                <p>We collect the following information when you sign up or interact with our app:</p>
+                <ul>
+                    <li>Username</li>
+                    <li>First Name, Last Name, and Date of Birth</li>
+                    <li>Email and Encrypted Password (bcrypt) – we cannot view your password</li>
+                    <li>Profile Picture</li>
+                    <li>Uploaded Posts (images/videos)</li>
+                </ul>
+                <h4>3. How We Use Your Information</h4>
+                <p>Your data enables us to provide essential features like user authentication, content sharing, and personalization. We <strong>do not sell or share</strong> your personal data with third-party advertisers.</p>
+                <p>Users can report inappropriate content for review and potential removal to maintain a safe community.</p>
+                <p>Uploaded posts (images and videos) are visible to all users within the app.</p>
+                <h4>4. Data Storage and Security</h4>
+                <p>All user data is securely stored in <strong>MongoDB</strong>. Passwords are encrypted using <strong>bcrypt</strong> and are not accessible by anyone.</p>
+                <p>We use the following infrastructure:</p>
+                <ul>
+                    <li><strong>AWS S3</strong> – For secure storage and retrieval of user-uploaded media (images/videos)</li>
+                    <li><strong>AWS Elastic Beanstalk</strong> – For deploying and hosting our backend server and APIs</li>
+                    <li><strong>Nodemailer</strong> – To send one-time passwords (OTP) to user email during registration</li>
+                </ul>
+                <p>These services follow industry best practices for encryption, privacy, and secure data handling.</p>
+                <h4>5. Your Rights</h4>
+                <p>You have full control over your data. At any time, you can:</p>
+                <ul>
+                    <li>Request access to your personal data</li>
+                    <li>Request corrections or updates</li>
+                    <li>Request account deletion</li>
+                </ul>
+                <p>To exercise your rights, contact us at <a href="mailto:support@hazo.co.in" style="color: var(--primary); text-decoration: none;">support@hazo.co.in</a>.</p>
+                <p>Users may delete their accounts, which removes their data and content from our platform.</p>
+                <h4>6. Third-Party Services</h4>
+                <p>We use the following third-party services:</p>
+                <ul>
+                    <li>AWS S3: For media hosting and delivery</li>
+                    <li>AWS Elastic Beanstalk: For application hosting</li>
+                    <li>Nodemailer: For sending OTPs via email (we do not store email content)</li>
+                </ul>
+                <p>These services do not have access to your personal data like email passwords or profile details.</p>
+                <h4>7. Data Retention</h4>
+                <p>We retain your data only while your account is active or as required for legal, regulatory, or operational purposes.</p>
+                <h4>8. Changes to This Policy</h4>
+                <p>We may update this policy occasionally. If significant changes are made, users will be notified through the app or by email.</p>
+                <h4>9. Contact Us</h4>
+                <p>If you have any questions or concerns regarding your privacy, reach out to us:</p>
+                <p>📧 <a href="mailto:support@hazo.co.in" style="color: var(--primary); text-decoration: none;">support@hazo.co.in</a></p>
+            </div>
+        </section>
+
+        <section id="child-safety">
+            <h2>👶 Child Safety on HAZO</h2>
+            <div class="info-content">
+                <h3>Hazo – Child Safety Standards</h3>
+                <p><strong>Effective Date:</strong> May 31, 2025</p>
+                <h4>1. Protection Against CSAE</h4>
+                <p>Hazo strictly prohibits any form of child sexual abuse and exploitation (CSAE). We do not allow any content that harms or endangers children. Offending accounts will be removed immediately and we will cooperate with legal authorities when necessary.</p>
+                <h4>2. Minimum Age Requirement</h4>
+                <p>Our platform is <strong>strictly intended for users aged 13 and above</strong>. During registration, we restrict the selection of birthdates after December 31, 2010, ensuring compliance with age guidelines.</p>
+                <h4>3. Prevention Measures</h4>
+                <ul>
+                    <li><strong>Age-gating:</strong> Registration blocks users under 13.</li>
+                    <li><strong>User reporting tools:</strong> Users can report unsafe content.</li>
+                    <li><strong>Content policy enforcement:</strong> Reports are reviewed and acted upon promptly.</li>
+                </ul>
+                <h4>4. Reporting and Response</h4>
+                <p>We do not currently employ trained child safety professionals, but we take all reports seriously. Any concerns about inappropriate content or behavior can be reported via email. We commit to addressing all issues promptly and responsibly.</p>
+                <p>📧 <a href="mailto:support@hazo.co.in" style="color: var(--primary); text-decoration: none;">support@hazo.co.in</a></p>
+                <h4>5. Commitment</h4>
+                <p>Hazo is committed to maintaining a safe, respectful, and age-appropriate environment. As our community grows, we will continue to improve safety features and guidelines.</p>
+            </div>
+        </section>
+
+        <section id="terms">
+            <h2>📄 Terms and Conditions</h2>
+            <div class="info-content">
+                <h3>Welcome to HAZO - Happy Zone!</h3>
+                <p>These Terms and Conditions ("Terms") govern your use of the HAZO website ("Service"), operated by [Your Company Name/HAZO]. By accessing or using the Service, you agree to be bound by these Terms. If you disagree with any part of the terms, then you may not access the Service.</p>
+
+                <h4>1. Use of Service</h4>
+                <p>HAZO provides curated content including memes, flicks, and skrits for entertainment and stress reduction purposes. The content is provided "as is" for your personal, non-commercial use. You agree not to use the Service for any unlawful or prohibited activities.</p>
+
+                <h4>2. Intellectual Property</h4>
+                <p>The Service and its original content (excluding content provided by users, if any, which is not applicable here as HAZO does not support user-generated content), features, and functionality are and will remain the exclusive property of [Your Company Name/HAZO] and its licensors. The Service is protected by copyright, trademark, and other laws of both the [Your Country] and foreign countries. Our trademarks and trade dress may not be used in connection with any product or service without the prior written consent of [Your Company Name/HAZO].</p>
+
+                <h4>3. Coin System</h4>
+                <p>The coin system on HAZO is purely for gamification and engagement within the Service. Coins have no real-world monetary value, cannot be exchanged for cash or other goods, and are non-transferable. Your coin balance is stored locally on your device and is not tied to any personal identifiable information.</p>
+
+                <h4>4. Disclaimers</h4>
+                <p>Your use of the Service is at your sole risk. The Service is provided on an "AS IS" and "AS AVAILABLE" basis. The Service is provided without warranties of any kind, whether express or implied, including, but not limited to, implied warranties of merchantability, fitness for a particular purpose, non-infringement or course of performance.</p>
+
+                <h4>5. Limitation of Liability</h4>
+                <p>In no event shall [Your Company Name/HAZO], nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from (i) your access to or use of or inability to access or use the Service; (iii) any content obtained from the Service; and (iv) unauthorized access, use or alteration of your transmissions or content, whether based on warranty, contract, tort (including negligence) or any other legal theory, whether or not we have been informed of the possibility of such damage, and even if a remedy set forth herein is found to have failed of its essential purpose.</p>
+
+                <h4>6. Changes to Terms</h4>
+                <p>We reserve the right, at our sole discretion, to modify or replace these Terms at any time. If a revision is material we will try to provide at least 30 days' notice prior to any new terms taking effect. What constitutes a material change will be determined at our sole discretion.</p>
+
+                <h4>7. Contact Us</h4>
+                <p>If you have any questions about these Terms, please contact us at [Your Contact Email/Method].</p>
+                <p class="text-center text-sm text-gray-500 mt-5">Last updated: July 10, 2025</p>
+            </div>
+        </section>
+
+        <section id="contact">
+            <h2>📧 Contact Us</h2>
+            <div class="info-content">
+                <h3>Get in Touch with HAZO</h3>
+                <p>We'd love to hear from you! Whether you have questions, feedback, or just want to say hello, feel free to reach out to us using the contact information below.</p>
+                <ul>
+                    <li><strong>Email:</strong> <a href="mailto:support@hazo.co.in" style="color: var(--primary); text-decoration: none;">support@hazo.com</a></li>
+                    
+                    
+                </ul>
+                <p>Our support team is available Monday to Friday, 9:00 AM - 5:00 PM (Your Local Time Zone).</p>
+                <p>For general inquiries, please allow up to 24-48 hours for a response.</p>
+            </div>
+        </section>
+    </main>
+
+    <div class="footer">
+        &copy; 2025 HAZO - Happy Zone. Made with 😊 for your smiles!
+        
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('section');
+            const coinBalanceDisplay = document.getElementById('coin-balance');
+            const headerCoinIcon = document.getElementById('header-coin-icon');
+            const earnCoinsButtons = document.querySelectorAll('.earn-coins-btn');
+
+            const COINS_STORAGE_KEY = 'hazoCoins';
+            let currentCoins = parseInt(localStorage.getItem(COINS_STORAGE_KEY) || '0', 10);
+
+            // Function to update the coin display
+            const updateCoinDisplay = () => {
+                coinBalanceDisplay.textContent = currentCoins;
+            };
+
+            // Function to handle smooth scrolling and active nav link
+            const scrollToSection = (id) => {
+                const targetSection = document.getElementById(id);
+                if (targetSection) {
+                    targetSection.scrollIntoView({ behavior: 'smooth' });
+
+                    // Update active class for navigation links
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                    });
+                    document.querySelector(`nav a[href="#${id}"]`).classList.add('active');
+                }
+            };
+
+            // Event listeners for navigation links
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    scrollToSection(targetId);
+                });
+            });
+
+            // Event listeners for "Collect Coins" buttons
+            earnCoinsButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const coinsToEarn = parseInt(button.textContent.match(/\d+/)[0], 10); // Extract number from button text
+                    currentCoins += coinsToEarn;
+                    localStorage.setItem(COINS_STORAGE_KEY, currentCoins);
+                    updateCoinDisplay();
+
+                    // Add bounce animation to header coin icon
+                    headerCoinIcon.classList.add('animate-bounce');
+                    headerCoinIcon.addEventListener('animationend', () => {
+                        headerCoinIcon.classList.remove('animate-bounce');
+                    }, { once: true }); // Remove listener after one animation cycle
+
+                    // Show "Coins Collected!" message with pop-up effect
+                    const messageSpan = button.nextElementSibling; // The span right after the button
+                    if (messageSpan && messageSpan.classList.contains('coin-earned-message')) {
+                        messageSpan.classList.add('show');
+                        setTimeout(() => {
+                            messageSpan.classList.remove('show');
+                            // Hide after transition ends to allow re-showing
+                            setTimeout(() => {
+                                messageSpan.style.display = 'none';
+                            }, 500); // Match transition duration
+                        }, 1000); // Display for 1 second
+                    }
+
+                    // Disable the button after collecting
+                    button.disabled = true;
+                    button.textContent = 'Collected!';
+                });
+            });
+
+            // Initialize coin display on load
+            updateCoinDisplay();
+
+            // Set active class on initial load based on URL hash, or default to memes
+            const initialHash = window.location.hash.substring(1);
+            if (initialHash && document.getElementById(initialHash)) {
+                scrollToSection(initialHash);
+            } else {
+                // No specific hash, or hash not found, default to the first section (memes)
+                document.querySelector('nav a[href="#memes"]').classList.add('active');
+            }
+
+            // Optional: Update active nav link as user scrolls
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.5 // Adjust as needed, percentage of section visible to be considered active
+            };
+
+            const sectionObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => link.classList.remove('active'));
+                        const currentNavLink = document.querySelector(`nav a[href="#${entry.target.id}"]`);
+                        if (currentNavLink) {
+                            currentNavLink.classList.add('active');
+                        }
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => {
+                sectionObserver.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>
